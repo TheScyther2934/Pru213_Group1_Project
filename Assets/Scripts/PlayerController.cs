@@ -39,9 +39,12 @@ public class PlayerController : MonoBehaviour
         }
 
         // --- ANIMATOR PARAMETERS ---
+        animator.SetFloat("LastMoveX", lastMoveDirection.x);
+        animator.SetFloat("LastMoveY", lastMoveDirection.y);
         animator.SetFloat("MoveX", movement.x);
         animator.SetFloat("MoveY", movement.y);
         animator.SetBool("IsMoving", movement != Vector2.zero);
+        
 
         // --- ATTACK INPUT ---
         if (Input.GetKeyDown(KeyCode.Space))
@@ -66,10 +69,6 @@ public class PlayerController : MonoBehaviour
         // Stop any motion and reset move params
         movement = Vector2.zero;
         animator.SetBool("IsMoving", false);
-
-        // Face last move direction
-        animator.SetFloat("LastMoveX", lastMoveDirection.x);
-        animator.SetFloat("LastMoveY", lastMoveDirection.y);
     }
 
     // 🔥 Called by Animation Event
@@ -89,9 +88,6 @@ public class PlayerController : MonoBehaviour
     {
         isAttacking = false;
         Debug.Log("Attack end trigger");
-        // ✅ Reset to idle cleanly
-        movement = Vector2.zero;
-        animator.SetBool("IsMoving", false);
         animator.SetTrigger("AttackEnd");
     }
 
