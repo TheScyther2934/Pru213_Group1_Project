@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
+    private bool frozen;
     public Rigidbody2D rb;
     public Animator animator;
 
@@ -25,7 +26,7 @@ public class PlayerController : MonoBehaviour
     {
         // ⚠️ Don't take input while attacking
         if (isAttacking) return;
-
+        if (frozen) return;
         // --- MOVEMENT INPUT ---
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
@@ -96,5 +97,15 @@ public class PlayerController : MonoBehaviour
         Vector2 attackPos = (Vector2)transform.position + lastMoveDirection * attackRange;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPos, 0.5f);
+    }
+
+    public void FreezeMovement(bool state)
+    {
+        frozen = state;
+    }
+
+    public void TakeDamage(int amount)
+    {
+        Debug.Log($"Player dính bẫy, -{amount} HP");
     }
 }
