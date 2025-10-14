@@ -10,5 +10,5 @@ public abstract class ItemSO : ScriptableObject
     [TextArea] public string description;
     public Sprite icon;
     public ItemKind kind;
-    public bool stackable = true;   // cho phép dùng chồng?
+    public bool stackable = true;
 }

@@ -2,15 +2,17 @@
 
 public class EnemyDropGold : MonoBehaviour
 {
-    public GameObject goldPrefab;   // prefab có SpriteRenderer + BoxCollider2D + GoldPickup
     public int minGold = 1, maxGold = 5;
 
-    // gọi hàm này từ Enemy.Die() hoặc OnDestroy (chủ động hơn là gọi trong Die)
-    public void Drop()
+    // Gọi khi enemy chết
+    public void DropToPlayer(GameObject killer)
     {
-        if (!goldPrefab) return;
-        var g = Instantiate(goldPrefab, transform.position, Quaternion.identity);
-        var pick = g.GetComponent<GoldPickup>();
-        if (pick) pick.amount = Random.Range(minGold, maxGold + 1);
+        var wallet = killer.GetComponent<CurrencyWallet>();
+        if (wallet != null)
+        {
+            int gold = Random.Range(minGold, maxGold + 1);
+            wallet.AddGold(gold);
+            Debug.Log($"+{gold} vàng!");
+        }
     }
 }

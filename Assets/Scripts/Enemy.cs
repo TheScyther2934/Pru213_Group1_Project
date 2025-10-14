@@ -10,5 +10,13 @@ public class Enemy : MonoBehaviour
         if (health <= 0f) Die();
     }
 
-    void Die() => Destroy(gameObject);
+    public void Die(GameObject killer = null)
+    {
+        if (killer)
+            GetComponent<EnemyDropGold>()?.DropToPlayer(killer);
+        else
+            GetComponent<EnemyDropGold>()?.DropToPlayer(FindObjectOfType<PlayerController>().gameObject);
+        Destroy(gameObject);
+    }
+
 }
