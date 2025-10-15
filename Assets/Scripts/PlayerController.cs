@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,28 +15,25 @@ public class PlayerController : MonoBehaviour
     Vector2 lastMoveDirection;
     bool isAttacking = false;
 
+    PlayerStats stats;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        stats = GetComponent<PlayerStats>(); // cần add component này trên Player
     }
 
     void Update()
     {
-        // ⚠️ Don't take input while attacking
         if (isAttacking) return;
         if (frozen) return;
         // --- MOVEMENT INPUT ---
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
-
-        // Keep only one dominant direction (avoid diagonal idle confusion)
         if (movement.x != 0) movement.y = 0;
 
-        if (movement != Vector2.zero)
-        {
-            lastMoveDirection = movement.normalized;
-        }
+        if (movement != Vector2.zero) lastMoveDirection = movement.normalized;
 
         // --- ANIMATOR PARAMETERS ---
         animator.SetFloat("LastMoveX", lastMoveDirection.x);
@@ -47,17 +43,14 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("IsMoving", movement != Vector2.zero);
         
 
-        // --- ATTACK INPUT ---
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Attack();
-        }
+        if (Input.GetKeyDown(KeyCode.Space)) Attack();
     }
 
     void FixedUpdate()
     {
         if (!isAttacking)
         {
+            float moveSpeed = stats != null ? stats.Get(StatType.MoveSpeed) : 5f;
             rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
         }
     }
@@ -66,28 +59,32 @@ public class PlayerController : MonoBehaviour
     {
         isAttacking = true;
         animator.SetTrigger("Attack");
-
-        // Stop any motion and reset move params
         movement = Vector2.zero;
         animator.SetBool("IsMoving", false);
+        animator.SetFloat("LastMoveX", lastMoveDirection.x);
+        animator.SetFloat("LastMoveY", lastMoveDirection.y);
     }
 
-    // 🔥 Called by Animation Event
+    // gọi bởi Animation Event giữa đòn
     public void AttackHit()
     {
         Vector2 attackPos = (Vector2)transform.position + lastMoveDirection * attackRange;
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPos, 0.5f, enemyLayers);
 
+        float dmg = stats != null ? stats.RollAttackDamage() : 10f;
+
         foreach (Collider2D enemy in hitEnemies)
         {
-            enemy.GetComponent<Enemy>()?.TakeDamage(10);
+            enemy.GetComponent<Enemy>()?.TakeDamage(dmg);
         }
     }
 
-    // 🔚 Called by Animation Event at end
+    // gọi bởi Animation Event cuối đòn
     public void AttackEnd()
     {
         isAttacking = false;
+        movement = Vector2.zero;
+        animator.SetBool("IsMoving", false);
         Debug.Log("Attack end trigger");
         animator.SetTrigger("AttackEnd");
     }

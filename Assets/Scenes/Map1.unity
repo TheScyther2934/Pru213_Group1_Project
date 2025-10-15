@@ -2883,6 +2883,7 @@ GameObject:
   - component: {fileID: 1139693460}
   - component: {fileID: 1139693459}
   - component: {fileID: 1139693462}
+  - component: {fileID: 1139693463}
   m_Layer: 6
   m_Name: TestEnemyTakeDamage
   m_TagString: Untagged
@@ -2996,6 +2997,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1139693463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139693458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39be0967649a86d42b57b9a9f1449b2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minGold: 1
+  maxGold: 5
 --- !u!1001 &1162606318
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3904,6 +3919,9 @@ GameObject:
   - component: {fileID: 1488096580}
   - component: {fileID: 1488096581}
   - component: {fileID: 1488096582}
+  - component: {fileID: 1488096583}
+  - component: {fileID: 1488096585}
+  - component: {fileID: 1488096584}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -4065,6 +4083,76 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.098437235, y: 0.06429206}
   m_EdgeRadius: 0
+--- !u!114 &1488096583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488096576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76367ebd2d5717f458aad1b602d4f803, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stats:
+  - type: 0
+    baseValue: 100
+    modifiers: []
+  - type: 1
+    baseValue: 10
+    modifiers: []
+  - type: 2
+    baseValue: 2
+    modifiers: []
+  - type: 3
+    baseValue: 5
+    modifiers: []
+  - type: 4
+    baseValue: 0.1
+    modifiers: []
+  - type: 5
+    baseValue: 1.5
+    modifiers: []
+  currentHealth: 0
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDamaged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHealed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1488096584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488096576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb5b426932068814f94410dadf509979, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slots: []
+--- !u!114 &1488096585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488096576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93d994219f03a0347b90e79b127cadde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gold: 0
+  OnGoldChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1499417875 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4643621473532925456, guid: a14260e449bf1c24e89d978d1c14ed92, type: 3}
@@ -5301,6 +5389,37 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a14260e449bf1c24e89d978d1c14ed92, type: 3}
+--- !u!1 &1909519825
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1909519826}
+  m_Layer: 0
+  m_Name: Shop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1909519826
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909519825}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 291.08536, y: 196.68501, z: -0.47209433}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1920394400
 PrefabInstance:
   m_ObjectHideFlags: 0
