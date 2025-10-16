@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,8 +15,9 @@ public class PlayerStats : MonoBehaviour
     public UnityEvent OnDeath;
     public UnityEvent<float> OnDamaged;
     public UnityEvent<float> OnHealed;
-
+    public Animator animator;
     Dictionary<StatType, Stat> map;
+    public GameObject gameOverUI;
 
     void Awake()
     {
@@ -86,8 +88,41 @@ public class PlayerStats : MonoBehaviour
         float dmg = Mathf.Max(1f, rawDamage - def);
         currentHealth -= dmg;
         OnDamaged?.Invoke(dmg);
-        if (currentHealth <= 0f) OnDeath?.Invoke();
+        animator.SetTrigger("Hurt");
+        if (currentHealth <= 0f)
+        {
+            currentHealth = 0f;
+            Die();
+        }
     }
+
+    private bool isDead = false;
+
+    void Die()
+    {
+        if (isDead) return; // prevent triggering multiple times
+        isDead = true;
+
+        // Play death animation
+        animator.SetTrigger("Die");
+
+        // Disable player control (optional)
+        var controller = GetComponent<PlayerController>();
+        if (controller != null)
+            controller.enabled = false;
+
+        StartCoroutine(HandleDeath());
+        // Fire Unity event if needed
+        OnDeath?.Invoke();
+    }
+
+    IEnumerator HandleDeath()
+    {
+        yield return new WaitForSeconds(1.96f); // length of Death anim
+        animator.enabled = false;            // freeze at last frame
+        gameOverUI?.SetActive(true);
+    }
+
 
     public float RollAttackDamage()
     {

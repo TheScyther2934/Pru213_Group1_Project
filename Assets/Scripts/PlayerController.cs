@@ -57,6 +57,7 @@ public class PlayerController : MonoBehaviour
 
     void Attack()
     {
+        if (isAttacking) return;
         isAttacking = true;
         animator.SetTrigger("Attack");
         movement = Vector2.zero;

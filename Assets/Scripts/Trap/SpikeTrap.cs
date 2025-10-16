@@ -19,6 +19,7 @@ public class SpikeTrap : MonoBehaviour
     private int phase; // 0=retracted, 1=extending, 2=extended, 3=retracting
     private bool playerInside;
     private PlayerController player;
+    private PlayerStats playerStats;
 
     void Start()
     {
@@ -95,8 +96,9 @@ public class SpikeTrap : MonoBehaviour
     {
         if (phase == 2 && collision.collider.CompareTag("Player"))
         {
+            playerStats = collision.collider.GetComponent<PlayerStats>();
             player = collision.collider.GetComponent<PlayerController>();
-            player.TakeDamage(10);
+            playerStats.TakeDamage(10);
             player.FreezeMovement(true);
             playerInside = true;
         }

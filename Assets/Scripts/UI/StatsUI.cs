@@ -2,12 +2,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class HealthBarUI : MonoBehaviour
+public class StatsUI : MonoBehaviour
 {
     public PlayerStats playerStats;
     public Slider slider;
     public TextMeshProUGUI healthText; // 👈 add this line
-
+    public TextMeshProUGUI statsText;
     void Start()
     {
         if (playerStats == null)
@@ -17,6 +17,7 @@ public class HealthBarUI : MonoBehaviour
         slider.value = playerStats.currentHealth;
 
         UpdateHealthText();
+        UpdateStats();
 
         // Subscribe to player events
         playerStats.OnDamaged.AddListener(UpdateHealth);
@@ -37,6 +38,22 @@ public class HealthBarUI : MonoBehaviour
         UpdateHealthText();
     }
 
+    void UpdateStats()
+    {
+        if (playerStats == null || statsText == null) return;
+
+        float atk = playerStats.Get(StatType.AttackPower);
+        float def = playerStats.Get(StatType.Defense);
+        float spd = playerStats.Get(StatType.MoveSpeed);
+        float critChance = playerStats.Get(StatType.CritChance) * 100f;
+        float critMul = playerStats.Get(StatType.CritMultiplier);
+
+        statsText.text =
+            $"Attack: {atk}\n" +
+            $"Defense: {def}\n" +
+            $"Speed: {spd}\n" +
+            $"Crit: {critChance:F0}% (x{critMul:F1})";
+    }
     void UpdateHealthText()
     {
         float current = Mathf.Round(playerStats.currentHealth);
