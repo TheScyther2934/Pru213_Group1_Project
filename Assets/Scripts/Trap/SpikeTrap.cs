@@ -76,7 +76,12 @@ public class SpikeTrap : MonoBehaviour
                 boxCollider.size = new Vector2(1f, 2f);
                 boxCollider.offset = new Vector2(0, 0.5f);
                 boxCollider.isTrigger = false; // cản player
+
+                // 🟢 Ép Unity refresh collider để OnCollisionEnter2D được kích hoạt
+                boxCollider.enabled = false;
+                boxCollider.enabled = true;
                 break;
+
 
             case 3: // retracting
                 spriteRenderer.sprite = halfExtendedSprite;
