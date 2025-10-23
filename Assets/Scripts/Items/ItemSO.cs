@@ -11,4 +11,7 @@ public abstract class ItemSO : ScriptableObject
     public Sprite icon;
     public ItemKind kind;
     public bool stackable = true;
+
+    [Header("Shop")]
+    public int price = 10;   // 👈 GIÁ BÁN
 }
