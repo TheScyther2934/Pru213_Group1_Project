@@ -3,14 +3,30 @@ using UnityEngine;
 
 public class GoldDisplay : MonoBehaviour
 {
-    public CurrencyWallet wallet;   // kéo Player vào đây
-    public TMP_Text text;           // kéo GoldText (chính nó) vào
+    private CurrencyWallet wallet;   // kéo Player vào đây
+    private TMP_Text text;           // kéo GoldText (chính nó) vào
 
     void Start()
     {
-        if (!text) text = GetComponent<TMP_Text>();
-        UpdateText();
-        if (wallet) wallet.OnGoldChanged.AddListener(OnGoldChanged);
+        text = GetComponent<TMP_Text>();
+
+        // 🔍 Find the player in the scene
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            wallet = player.GetComponent<CurrencyWallet>();
+        }
+
+        // 💰 Listen for gold changes
+        if (wallet != null)
+        {
+            wallet.OnGoldChanged.AddListener(OnGoldChanged);
+            UpdateText();
+        }
+        else
+        {
+            text.text = "0"; // fallback
+        }
     }
 
     void OnDestroy()

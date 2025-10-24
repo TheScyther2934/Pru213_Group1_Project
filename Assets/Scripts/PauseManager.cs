@@ -32,7 +32,17 @@ public class PauseManager : MonoBehaviour
 
     public void ReturnMainMenu()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        Time.timeScale = 1f; // Unpause first
+
+        // ✅ Let GameManager handle cleanup and scene transition
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.BackToMainMenu();
+        }
+        else
+        {
+            // fallback (if somehow GameManager missing)
+            SceneManager.LoadScene("MainMenu");
+        }
     }
 }
