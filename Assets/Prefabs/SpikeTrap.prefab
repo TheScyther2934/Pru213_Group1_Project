@@ -100,7 +100,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   retractedSprite: {fileID: 403049014, guid: 336d43df31d19194eb8d10346f937af8, type: 3}
   halfExtendedSprite: {fileID: 1160550, guid: 336d43df31d19194eb8d10346f937af8, type: 3}
-  fullExtendedSprite: {fileID: 1344395578, guid: 336d43df31d19194eb8d10346f937af8, type: 3}
+  fullExtendedSprite: {fileID: 1344395578, guid: 336d43df31d19194eb8d10346f937af8,
+    type: 3}
   retractedDuration: 2
   extendingDuration: 0.3
   extendedDuration: 2
@@ -119,7 +120,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.041276217, y: 0.49531174}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0}
@@ -130,5 +131,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.78536415, y: 0.8018799}
   m_EdgeRadius: 0

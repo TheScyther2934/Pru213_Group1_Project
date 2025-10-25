@@ -31,17 +31,21 @@ public class PlayerController : MonoBehaviour
         // --- MOVEMENT INPUT ---
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
-        if (movement.x != 0) movement.y = 0;
+        movement.Normalize();
 
-        if (movement != Vector2.zero) lastMoveDirection = movement.normalized;
+        if (movement != Vector2.zero)
+        {
+            lastMoveDirection = movement;
+        }
 
         // --- ANIMATOR PARAMETERS ---
         animator.SetFloat("LastMoveX", lastMoveDirection.x);
         animator.SetFloat("LastMoveY", lastMoveDirection.y);
         animator.SetFloat("MoveX", movement.x);
         animator.SetFloat("MoveY", movement.y);
-        animator.SetBool("IsMoving", movement != Vector2.zero);
-        
+        animator.SetBool("IsMoving", movement.sqrMagnitude > 0.01f);
+
+
 
         if (Input.GetKeyDown(KeyCode.Space)) Attack();
     }
