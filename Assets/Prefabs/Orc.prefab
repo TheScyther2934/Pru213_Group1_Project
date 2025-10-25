@@ -127,8 +127,8 @@ MonoBehaviour:
   moveSpeed: 2
   chaseRange: 5
   attackRange: 1.2
-  attackCooldown: 2
-  player: {fileID: 0}
+  attackCooldown: 5
+  player: {fileID: 602280142453750987, guid: afc2ba7a3db476a49ae3f34291796424, type: 3}
   weapon: {fileID: 1013207753718777883}
 --- !u!114 &1013207752744983141
 MonoBehaviour:

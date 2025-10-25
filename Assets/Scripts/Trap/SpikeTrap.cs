@@ -28,7 +28,8 @@ public class SpikeTrap : MonoBehaviour
         boxCollider.isTrigger = true;
 
         if (offsetPhase)
-            timer = Random.Range(0f, retractedDuration + extendedDuration);
+            //timer = Random.Range(0f, retractedDuration + extendedDuration);
+            timer = 0f;
 
         phase = 0;
         UpdateTrapState();
