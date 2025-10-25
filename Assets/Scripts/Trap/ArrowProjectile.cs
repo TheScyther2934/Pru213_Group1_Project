@@ -21,6 +21,7 @@ public class ArrowProjectile : MonoBehaviour
     SpriteRenderer sr;
     Vector3 spawnPos;
     float spawnTime;
+    public int damageAmount = 5;
 
     void Awake()
     {
@@ -60,6 +61,14 @@ public class ArrowProjectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (!other.CompareTag("Player")) return;
+
+        PlayerStats playerStats = other.GetComponent<PlayerStats>();
+        if (playerStats != null)
+        {
+            playerStats.TakeDamage(damageAmount);
+        }
+
         Destroy(gameObject);
     }
 }
