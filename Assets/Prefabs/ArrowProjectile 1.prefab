@@ -126,6 +126,8 @@ MonoBehaviour:
   orderWhenBehind: 0
   orderWhenFront: 10
   distanceToSwitch: 0.25
+  damageAmount: 5
+  knockbackForce: 400
 --- !u!60 &1447380360847637734
 PolygonCollider2D:
   m_ObjectHideFlags: 0
