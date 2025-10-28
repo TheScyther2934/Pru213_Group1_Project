@@ -62,6 +62,7 @@ public class ArrowProjectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.CompareTag("Wall")) Destroy(gameObject);
         if (!other.CompareTag("Player")) return;
 
         PlayerStats playerStats = other.GetComponent<PlayerStats>();
