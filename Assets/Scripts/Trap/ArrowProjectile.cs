@@ -21,6 +21,8 @@ public class ArrowProjectile : MonoBehaviour
     SpriteRenderer sr;
     Vector3 spawnPos;
     float spawnTime;
+    public int damageAmount = 5;
+    public float knockbackForce = 400f;
 
     void Awake()
     {
@@ -60,6 +62,30 @@ public class ArrowProjectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (!other.CompareTag("Player")) return;
+
+        PlayerStats playerStats = other.GetComponent<PlayerStats>();
+        if (playerStats != null)
+        {
+            playerStats.TakeDamage(damageAmount);
+        }
+
+        PlayerController controller = other.GetComponentInParent<PlayerController>();
+        if (controller != null)
+        {
+            Vector2 knockDir = rb.velocity.normalized;
+            // tùy chỉnh: nếu bạn dùng rb.velocity = dir * force, force nên là một số nhỏ-moderate, ex 5f
+            float forceForVelocity = knockbackForce * 0.01f; // nếu knockbackForce gốc bạn đặt lớn, chia nhỏ
+            controller.ApplyKnockback(knockDir, forceForVelocity, 0.18f);
+
+            Debug.Log($"Arrow hit player. knockDir={knockDir} applied force={forceForVelocity}");
+        }
+        else
+        {
+            Debug.Log("Arrow hit player but PlayerController not found on collider or parents");
+        }
+
+
         Destroy(gameObject);
     }
 }
