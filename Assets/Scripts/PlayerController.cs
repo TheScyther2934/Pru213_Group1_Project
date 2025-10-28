@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     Vector2 movement;
     Vector2 lastMoveDirection;
     bool isAttacking = false;
+    private bool isKnockback = false;
+    private float knockbackEndTime = 0f;
 
     PlayerStats stats;
 
@@ -52,6 +54,23 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isKnockback)
+        {
+            // check end time
+            if (Time.time >= knockbackEndTime)
+            {
+                isKnockback = false;
+                rb.velocity = Vector2.zero; // stop residual velocity
+                // optional: restore something
+                Debug.Log("Knockback ended");
+            }
+            else
+            {
+                // still knockbacking -> do nothing else
+                return;
+            }
+        }
+
         if (!isAttacking)
         {
             float moveSpeed = stats != null ? stats.Get(StatType.MoveSpeed) : 5f;
@@ -109,5 +128,20 @@ public class PlayerController : MonoBehaviour
     public void TakeDamage(int amount)
     {
         Debug.Log($"Player dính bẫy, -{amount} HP");
+    }
+
+    public void ApplyKnockback(Vector2 direction, float force, float duration = 0.25f)
+    {
+        if (rb == null) return;
+
+        // ensure direction is normalized
+        Vector2 dir = direction.normalized;
+        isKnockback = true;
+        knockbackEndTime = Time.time + duration;
+
+        // đặt velocity trực tiếp (thống nhất hơn AddForce khi dùng MovePosition)
+        rb.velocity = dir * force;
+
+        Debug.Log($"ApplyKnockback dir={dir} force={force} duration={duration}");
     }
 }
