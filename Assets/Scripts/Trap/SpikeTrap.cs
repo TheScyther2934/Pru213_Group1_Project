@@ -61,21 +61,21 @@ public class SpikeTrap : MonoBehaviour
         {
             case 0: // retracted
                 spriteRenderer.sprite = retractedSprite;
-                boxCollider.size = new Vector2(1f, 1f);
+                boxCollider.size = new Vector2(0.7f, 0.7f);
                 boxCollider.offset = new Vector2(0, 0.5f);
                 boxCollider.isTrigger = true; // cho đi qua
                 break;
 
             case 1: // extending
                 spriteRenderer.sprite = halfExtendedSprite;
-                boxCollider.size = new Vector2(1f, 1f);
+                boxCollider.size = new Vector2(0.7f, 0.7f);
                 boxCollider.offset = new Vector2(0, 0.5f);
                 boxCollider.isTrigger = true;
                 break;
 
             case 2: // fully extended
                 spriteRenderer.sprite = fullExtendedSprite;
-                boxCollider.size = new Vector2(1f, 1f);
+                boxCollider.size = new Vector2(0.7f, 0.7f);
                 boxCollider.offset = new Vector2(0, 0.5f);
                 boxCollider.isTrigger = false; // cản player
 
@@ -87,7 +87,7 @@ public class SpikeTrap : MonoBehaviour
 
             case 3: // retracting
                 spriteRenderer.sprite = halfExtendedSprite;
-                boxCollider.size = new Vector2(1f, 1f);
+                boxCollider.size = new Vector2(0.7f, 0.7f);
                 boxCollider.offset = new Vector2(0, 0.5f);
                 boxCollider.isTrigger = true; // cho đi ra dễ
                 if (playerInside)

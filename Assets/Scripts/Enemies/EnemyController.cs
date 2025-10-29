@@ -27,12 +27,30 @@ public class EnemyController : MonoBehaviour
         anim = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
 
-        if (player == null)
-            player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        //if (player == null)
+        //    player = GameObject.FindGameObjectWithTag("Player")?.transform;
     }
 
     void Update()
     {
+        if (player == null)
+        {
+            // Tìm đối tượng có tag "Player"
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.transform;
+            }
+            else
+            {
+                // Nếu không tìm thấy, đứng yên và không làm gì cả
+                isMoving = false;
+                moveDir = Vector2.zero;
+                anim.SetFloat("Speed", 0);
+                return; // Thoát khỏi hàm Update cho frame này
+            }
+        }
+
         if (player == null || isAttacking) return;
 
         float distance = Vector2.Distance(transform.position, player.position);

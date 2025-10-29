@@ -339,7 +339,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   animator: {fileID: 602280142453750988}
-  gameOverUI: {fileID: 0}
+  gameOverUI: {fileID: 7932568777744633510, guid: 11139a535308aba4e96e648143050ea6,
+    type: 3}
 --- !u!114 &602280142453750977
 MonoBehaviour:
   m_ObjectHideFlags: 0
