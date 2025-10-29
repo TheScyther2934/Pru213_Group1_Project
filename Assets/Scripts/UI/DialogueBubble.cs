@@ -6,7 +6,7 @@ using TMPro;
 public class DialogueBubble : MonoBehaviour
 {
     public TextMeshProUGUI messageText;
-    public float duration = 2.5f;
+    public float duration = 1f;
     public Vector3 offset = new Vector3(-3f, 1.5f, 0);
 
     private Transform target;
@@ -61,7 +61,7 @@ public class DialogueBubble : MonoBehaviour
         foreach (char c in message)
         {
             messageText.text += c;
-            yield return new WaitForSeconds(0.04f);
+            yield return new WaitForSeconds(0.02f);
         }
     }
 }
