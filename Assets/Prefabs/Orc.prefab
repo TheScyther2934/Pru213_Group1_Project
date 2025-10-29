@@ -8,6 +8,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
+<<<<<<< Updated upstream
   - component: {fileID: 868004472501447273}
   - component: {fileID: 868004472501447274}
   - component: {fileID: 868004472501447272}
@@ -16,6 +17,19 @@ GameObject:
   - component: {fileID: 868004472501447267}
   - component: {fileID: 868004472501447279}
   - component: {fileID: 868004472501447278}
+=======
+  - component: {fileID: 1013207752744983137}
+  - component: {fileID: 1013207752744983138}
+  - component: {fileID: 1013207752744983136}
+  - component: {fileID: 1013207752744983140}
+  - component: {fileID: 1013207752744983147}
+  - component: {fileID: 1013207752744983143}
+  - component: {fileID: 1013207752744983142}
+  - component: {fileID: 3742936338668534359}
+  - component: {fileID: 2697226889228029660}
+  - component: {fileID: 7039651085929620198}
+  - component: {fileID: 3171686679071444225}
+>>>>>>> Stashed changes
   m_Layer: 6
   m_Name: Orc
   m_TagString: Enemy
@@ -124,6 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ac424f1ee98982439d695a1c2ae6336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream
   moveSpeed: 2
   chaseRange: 5
   attackRange: 1.2
@@ -146,6 +161,14 @@ MonoBehaviour:
   knockbackForce: 3
   deathDelay: 1
 --- !u!114 &868004472501447267
+=======
+  chaseRange: 10
+  attackRange: 1.2
+  attackCooldown: 5
+  roamWaitTime: 2
+  weapon: {fileID: 1013207753718777883}
+--- !u!114 &1013207752744983147
+>>>>>>> Stashed changes
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -166,8 +189,13 @@ Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+<<<<<<< Updated upstream
   m_GameObject: {fileID: 868004472501447275}
   m_BodyType: 1
+=======
+  m_GameObject: {fileID: 1013207752744983139}
+  m_BodyType: 0
+>>>>>>> Stashed changes
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -190,13 +218,79 @@ CapsuleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.27381644, y: 0.03352928}
   m_Size: {x: 0.46972877, y: 0.83854294}
   m_Direction: 0
+<<<<<<< Updated upstream
 --- !u!1 &868004473610123294
+=======
+--- !u!114 &3742936338668534359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013207752744983139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a8c830ccf617744b97007fb7da5964b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  knockBackTime: 0.2
+  wallLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  checkDistance: 0.1
+--- !u!114 &2697226889228029660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013207752744983139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8446a9f8deb720c4cb6f8af906401f55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 2
+--- !u!114 &7039651085929620198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013207752744983139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 045c411dd064f654aa0f53d647700ba3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startingHealth: 20
+  deathDestroyTime: 1
+--- !u!114 &3171686679071444225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013207752744983139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a47706ecbbfd3d445884e4e4f5488e48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 10
+  attackRange: 2
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  attackPoint: {fileID: 1013207753718777877}
+--- !u!1 &1013207753718777878
+>>>>>>> Stashed changes
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

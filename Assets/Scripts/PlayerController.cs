@@ -67,18 +67,34 @@ public class PlayerController : MonoBehaviour
     }
 
     // gọi bởi Animation Event giữa đòn
+// ... (các hàm khác giữ nguyên) ...
+
+    // gọi bởi Animation Event giữa đòn
     public void AttackHit()
     {
         Vector2 attackPos = (Vector2)transform.position + lastMoveDirection * attackRange;
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPos, 0.5f, enemyLayers);
 
-        float dmg = stats != null ? stats.RollAttackDamage() : 10f;
+        // Giả sử PlayerStats của bạn trả về int. Nếu nó trả về float,
+        // bạn cần làm tròn nó trước khi truyền vào EnemyHealth.
+        // Ở đây tôi dùng Mathf.RoundToInt để đảm bảo an toàn.
+        int dmg = stats != null ? Mathf.RoundToInt(stats.RollAttackDamage()) : 10;
 
-        foreach (Collider2D enemy in hitEnemies)
+        foreach (Collider2D enemyCollider in hitEnemies)
         {
-            enemy.GetComponent<Enemy>()?.TakeDamage(dmg);
+            // Lấy component EnemyHealth (thay vì "Enemy")
+            EnemyHealth enemy = enemyCollider.GetComponent<EnemyHealth>();
+            
+            if (enemy != null)
+            {
+                // *** THAY ĐỔI QUAN TRỌNG Ở ĐÂY ***
+                // Truyền "transform" (của Player) vào làm tham số thứ hai
+                enemy.TakeDamage(dmg, transform);
+            }
         }
     }
+
+    // ... (các hàm khác giữ nguyên) ...
 
     // gọi bởi Animation Event cuối đòn
     public void AttackEnd()
@@ -106,4 +122,28 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log($"Player dính bẫy, -{amount} HP");
     }
+<<<<<<< Updated upstream
+=======
+
+    public void ApplyKnockback(Vector2 direction, float force, float duration = 0.25f)
+    {
+        if (rb == null) return;
+        if (isAttacking)
+        {
+            isAttacking = false;
+            animator.SetTrigger("AttackEnd");
+        }
+        Vector2 dir = direction.normalized;
+        isKnockback = true;
+        knockbackEndTime = Time.time + duration;
+        rb.velocity = dir * force;
+
+        Debug.Log($"ApplyKnockback dir={dir} force={force} duration={duration}");
+    }
+
+    public bool IsKnockbackActive
+    {
+        get { return isKnockback; }
+    }
+>>>>>>> Stashed changes
 }
