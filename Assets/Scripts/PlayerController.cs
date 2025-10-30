@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -14,11 +14,10 @@ public class PlayerController : MonoBehaviour
     Vector2 movement;
     Vector2 lastMoveDirection;
     bool isAttacking = false;
-    private bool isKnockback = false;
-    private float knockbackEndTime = 0f;
 
     PlayerStats stats;
-
+    private bool isInvulnerable = false;
+    private Coroutine takeDamageCoroutine;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -28,8 +27,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (isAttacking) return;
-        if (frozen) return;
+        if (isAttacking || frozen || isInvulnerable)
+        {
+            movement = Vector2.zero; // Đảm bảo nhân vật không trôi đi
+            return;
+        }
         // --- MOVEMENT INPUT ---
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
@@ -54,28 +56,16 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isKnockback)
+        // Khi bị choáng/knockback, Coroutine sẽ xử lý vận tốc, nên chúng ta không di chuyển ở đây
+        if (isAttacking || isInvulnerable)
         {
-            // check end time
-            if (Time.time >= knockbackEndTime)
-            {
-                isKnockback = false;
-                rb.velocity = Vector2.zero; // stop residual velocity
-                // optional: restore something
-                Debug.Log("Knockback ended");
-            }
-            else
-            {
-                // still knockbacking -> do nothing else
-                return;
-            }
+            // Có thể muốn dừng hẳn nhân vật nếu không có knockback
+            if (!isInvulnerable) rb.velocity = Vector2.zero;
+            return;
         }
 
-        if (!isAttacking)
-        {
-            float moveSpeed = stats != null ? stats.Get(StatType.MoveSpeed) : 5f;
-            rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
-        }
+        float currentMoveSpeed = stats != null ? stats.Get(StatType.MoveSpeed) : 5f;
+        rb.MovePosition(rb.position + movement.normalized * currentMoveSpeed * Time.fixedDeltaTime);
     }
 
     void Attack()
@@ -130,18 +120,38 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"Player dính bẫy, -{amount} HP");
     }
 
-    public void ApplyKnockback(Vector2 direction, float force, float duration = 0.25f)
+    public void HandleTakeDamage(Vector2 knockbackDirection, float knockbackForce)
     {
-        if (rb == null) return;
+        if (isInvulnerable) return;
 
-        // ensure direction is normalized
-        Vector2 dir = direction.normalized;
-        isKnockback = true;
-        knockbackEndTime = Time.time + duration;
+        // Dừng coroutine cũ nếu có để reset lại trạng thái choáng
+        if (takeDamageCoroutine != null)
+        {
+            StopCoroutine(takeDamageCoroutine);
+        }
+        takeDamageCoroutine = StartCoroutine(TakeDamageRoutine(knockbackDirection, knockbackForce));
+    }
 
-        // đặt velocity trực tiếp (thống nhất hơn AddForce khi dùng MovePosition)
-        rb.velocity = dir * force;
+    private IEnumerator TakeDamageRoutine(Vector2 knockbackDirection, float knockbackForce)
+    {
+        // Nếu bị choáng, chúng ta phải hủy bỏ trạng thái "đang tấn công"
+        // để tránh bị kẹt nếu đòn đánh bị ngắt ngang.
+        isAttacking = false;
 
-        Debug.Log($"ApplyKnockback dir={dir} force={force} duration={duration}");
+        // Bắt đầu trạng thái "choáng" và "bất tử"
+        isInvulnerable = true;
+        animator.SetTrigger("Hurt");
+
+        // Áp dụng lực đẩy lùi
+        rb.velocity = Vector2.zero; // Xóa vận tốc cũ
+        rb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
+
+        // Đợi một khoảng thời gian ngắn
+        yield return new WaitForSeconds(0.4f);
+
+        // Kết thúc trạng thái
+        rb.velocity = Vector2.zero; // Dừng hẳn sau khi văng đi
+        isInvulnerable = false;
+        takeDamageCoroutine = null;
     }
 }

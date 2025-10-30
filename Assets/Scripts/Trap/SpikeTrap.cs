@@ -11,15 +11,19 @@ public class SpikeTrap : MonoBehaviour
     public float extendedDuration = 2f;
     public float retractingDuration = 0.3f;
 
+    [Tooltip("Thời gian giữa mỗi lần gây sát thương khi Player đứng trên bẫy")]
+    public float damageInterval = 1f;
     public bool offsetPhase;
 
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxCollider;
     private float timer;
     private int phase; // 0=retracted, 1=extending, 2=extended, 3=retracting
-    private bool playerInside;
-    private PlayerController player;
-    private PlayerStats playerStats;
+    //private bool playerInside;
+    //private PlayerController player;
+    private PlayerStats playerStatsInside;
+    public int damageAmount = 8;
+    private float nextDamageTime;
 
     void Start()
     {
@@ -46,6 +50,15 @@ public class SpikeTrap : MonoBehaviour
             case 2: if (timer >= extendedDuration) NextPhase(3); break;
             case 3: if (timer >= retractingDuration) NextPhase(0); break;
         }
+
+        if (phase == 2 && playerStatsInside != null && Time.time >= nextDamageTime)
+        {
+            // Gây sát thương cho người chơi
+            playerStatsInside.TakeDamage(damageAmount, transform.position);
+
+            // Đặt lại thời điểm gây sát thương tiếp theo
+            nextDamageTime = Time.time + damageInterval;
+        }
     }
 
     private void NextPhase(int newPhase)
@@ -57,66 +70,53 @@ public class SpikeTrap : MonoBehaviour
 
     private void UpdateTrapState()
     {
+        boxCollider.size = new Vector2(0.7f, 0.7f);
+        boxCollider.offset = new Vector2(0, 0.5f);
+
         switch (phase)
         {
-            case 0: // retracted
-                spriteRenderer.sprite = retractedSprite;
-                boxCollider.size = new Vector2(0.7f, 0.7f);
-                boxCollider.offset = new Vector2(0, 0.5f);
-                boxCollider.isTrigger = true; // cho đi qua
-                break;
-
-            case 1: // extending
-                spriteRenderer.sprite = halfExtendedSprite;
-                boxCollider.size = new Vector2(0.7f, 0.7f);
-                boxCollider.offset = new Vector2(0, 0.5f);
-                boxCollider.isTrigger = true;
-                break;
-
-            case 2: // fully extended
-                spriteRenderer.sprite = fullExtendedSprite;
-                boxCollider.size = new Vector2(0.7f, 0.7f);
-                boxCollider.offset = new Vector2(0, 0.5f);
-                boxCollider.isTrigger = false; // cản player
-
-                // 🟢 Ép Unity refresh collider để OnCollisionEnter2D được kích hoạt
-                boxCollider.enabled = false;
-                boxCollider.enabled = true;
-                break;
-
-
-            case 3: // retracting
-                spriteRenderer.sprite = halfExtendedSprite;
-                boxCollider.size = new Vector2(0.7f, 0.7f);
-                boxCollider.offset = new Vector2(0, 0.5f);
-                boxCollider.isTrigger = true; // cho đi ra dễ
-                if (playerInside)
-                {
-                    playerInside = false;
-                    player?.FreezeMovement(false);
-                }
-                break;
+            case 0: spriteRenderer.sprite = retractedSprite; break;
+            case 1: spriteRenderer.sprite = halfExtendedSprite; break;
+            case 2: spriteRenderer.sprite = fullExtendedSprite; break;
+            case 3: spriteRenderer.sprite = halfExtendedSprite; break;
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (phase == 2 && collision.collider.CompareTag("Player"))
+    //    {
+    //        playerStats = collision.collider.GetComponent<PlayerStats>();
+    //        player = collision.collider.GetComponent<PlayerController>();
+    //        playerStats.TakeDamage(10);
+    //        player.FreezeMovement(true);
+    //        playerInside = true;
+    //    }
+    //}
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (phase == 2 && collision.collider.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            playerStats = collision.collider.GetComponent<PlayerStats>();
-            player = collision.collider.GetComponent<PlayerController>();
-            playerStats.TakeDamage(10);
-            player.FreezeMovement(true);
-            playerInside = true;
+            playerStatsInside = other.GetComponent<PlayerStats>();
+            nextDamageTime = 0;
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    //private void OnCollisionExit2D(Collision2D collision)
+    //{
+    //    if (collision.collider.CompareTag("Player") && playerInside)
+    //    {
+    //        playerInside = false;
+    //        player.FreezeMovement(false);
+    //    }
+    //}
+
+    private void OnTriggerExit2D(Collider2D other)
     {
-        if (collision.collider.CompareTag("Player") && playerInside)
+        if (other.CompareTag("Player"))
         {
-            playerInside = false;
-            player.FreezeMovement(false);
+            playerStatsInside = null;
         }
     }
 }

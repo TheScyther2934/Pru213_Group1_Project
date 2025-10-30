@@ -18,9 +18,11 @@ public class PlayerStats : MonoBehaviour
     public Animator animator;
     Dictionary<StatType, Stat> map;
     public GameObject gameOverUI;
+    private PlayerController controller;
 
     void Awake()
     {
+        controller = GetComponent<PlayerController>();
         map = new Dictionary<StatType, Stat>();
         foreach (var s in stats) map[s.type] = s;
 
@@ -82,13 +84,21 @@ public class PlayerStats : MonoBehaviour
         OnHealed?.Invoke(amount);
     }
 
-    public void TakeDamage(float rawDamage)
+    public void TakeDamage(float rawDamage, Vector2 damageSourcePosition)
     {
+        if (isDead) return;
         float def = Get(StatType.Defense);
         float dmg = Mathf.Max(1f, rawDamage - def);
         currentHealth -= dmg;
         OnDamaged?.Invoke(dmg);
-        animator.SetTrigger("Hurt");
+        //animator.SetTrigger("Hurt");
+        if (controller != null)
+        {
+            // Tính toán hướng đẩy lùi
+            Vector2 knockbackDir = ((Vector2)transform.position - damageSourcePosition).normalized;
+            // Gọi hàm xử lý mới trong controller
+            controller.HandleTakeDamage(knockbackDir, 4f); // 4f là lực knockback, bạn có thể tùy chỉnh
+        }
         if (currentHealth <= 0f)
         {
             currentHealth = 0f;

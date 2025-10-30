@@ -9,7 +9,7 @@ public class ArrowTrap : MonoBehaviour
     public Sprite holeWithTipSprite;    // lỗ + mũi tên ló ra (prepare)
 
     [Header("Fire Settings")]
-    public GameObject arrowPrefab;      // prefab ArrowProjectile
+    //public GameObject arrowPrefab;      // prefab ArrowProjectile
     public Transform firePoint;         // vị trí spawn (child)
     public float fireInterval = 2.0f;   // tổng thời gian giữa 2 phát
     public float prepareTime = 0.25f;   // thời gian hiện holeWithTip trước khi bắn
@@ -53,16 +53,18 @@ public class ArrowTrap : MonoBehaviour
 
             // fire
             if (sr != null && holeSprite != null) sr.sprite = holeSprite;
-            SpawnArrow();
+            SpawnArrowFromPool();
         }
     }
 
-    void SpawnArrow()
+    void SpawnArrowFromPool()
     {
-        if (arrowPrefab == null || firePoint == null) return;
+        GameObject arrow = ObjectPooler.Instance.GetPooledObject();
+        if (arrow == null || firePoint == null) return;
 
-        GameObject a = Instantiate(arrowPrefab, firePoint.position, Quaternion.identity);
-        var proj = a.GetComponent<ArrowProjectile>();
+        arrow.transform.position = firePoint.position;
+        arrow.SetActive(true);
+        var proj = arrow.GetComponent<ArrowProjectile>();
         if (proj != null)
         {
             // override visual order settings

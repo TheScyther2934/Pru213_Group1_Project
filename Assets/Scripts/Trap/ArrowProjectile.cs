@@ -20,7 +20,7 @@ public class ArrowProjectile : MonoBehaviour
     Rigidbody2D rb;
     SpriteRenderer sr;
     Vector3 spawnPos;
-    float spawnTime;
+    //float spawnTime;
     public int damageAmount = 5;
     public float knockbackForce = 400f;
 
@@ -30,11 +30,18 @@ public class ArrowProjectile : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
+    void OnEnable()
+    {
+        // Thay vì dùng Update để check lifetime, chúng ta dùng Invoke
+        // Nó sẽ tự động gọi hàm ReturnToPool sau 'lifetime' giây. Hiệu năng tốt hơn.
+        Invoke(nameof(ReturnToPool), lifetime);
+    }
+
     // direction: unit vector (top-down)
     public void Launch(Vector2 direction)
     {
         spawnPos = transform.position;
-        spawnTime = Time.time;
+        //spawnTime = Time.time;
         rb.velocity = direction.normalized * speed;
 
         if (sr != null) sr.sortingOrder = orderWhenBehind;
@@ -46,12 +53,6 @@ public class ArrowProjectile : MonoBehaviour
 
     void Update()
     {
-        if (Time.time - spawnTime > lifetime)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
         if (sr != null && sr.sortingOrder == orderWhenBehind)
         {
             float d = Vector3.Distance(spawnPos, transform.position);
@@ -62,31 +63,25 @@ public class ArrowProjectile : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Wall")) Destroy(gameObject);
+        if (other.CompareTag("Wall"))
+        {
+            ReturnToPool(); // Trả về pool thay vì Destroy
+            return;
+        }
         if (!other.CompareTag("Player")) return;
 
         PlayerStats playerStats = other.GetComponent<PlayerStats>();
         if (playerStats != null)
         {
-            playerStats.TakeDamage(damageAmount);
+            playerStats.TakeDamage(damageAmount, transform.position);
         }
-
-        PlayerController controller = other.GetComponentInParent<PlayerController>();
-        if (controller != null)
-        {
-            Vector2 knockDir = rb.velocity.normalized;
-            // tùy chỉnh: nếu bạn dùng rb.velocity = dir * force, force nên là một số nhỏ-moderate, ex 5f
-            float forceForVelocity = knockbackForce * 0.01f; // nếu knockbackForce gốc bạn đặt lớn, chia nhỏ
-            controller.ApplyKnockback(knockDir, forceForVelocity, 0.18f);
-
-            Debug.Log($"Arrow hit player. knockDir={knockDir} applied force={forceForVelocity}");
-        }
-        else
-        {
-            Debug.Log("Arrow hit player but PlayerController not found on collider or parents");
-        }
-
-
-        Destroy(gameObject);
+        ReturnToPool();
+    }
+    private void ReturnToPool()
+    {
+        // Quan trọng: Hủy Invoke để tránh việc nó được gọi lại sau khi đã va chạm
+        CancelInvoke(nameof(ReturnToPool));
+        // Tắt object đi thay vì hủy
+        gameObject.SetActive(false);
     }
 }

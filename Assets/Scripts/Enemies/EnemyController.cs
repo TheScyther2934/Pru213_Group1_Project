@@ -69,9 +69,13 @@ public class EnemyController : MonoBehaviour
         anim.SetFloat("Speed", moveDir.magnitude);
 
         // Lật hướng theo player
-        if (moveDir.x != 0)
+        if (moveDir.x > 0.01f) // Di chuyển sang phải
         {
-            sr.flipX = moveDir.x < 0;
+            transform.localScale = new Vector3(1, 1, 1); // Scale mặc định
+        }
+        else if (moveDir.x < -0.01f) // Di chuyển sang trái
+        {
+            transform.localScale = new Vector3(-1, 1, 1); // Lật theo trục X
         }
 
         // Khi player trong tầm đánh
@@ -99,14 +103,21 @@ public class EnemyController : MonoBehaviour
         anim.SetInteger("AttackIndex", attackType);
         anim.SetBool("IsAttacking", true);
 
-        // Bật collider (nếu không dùng animation event)
+        // Đợi một chút để animation vung vũ khí
+        yield return new WaitForSeconds(0.3f); // Tùy chỉnh thời gian này cho khớp với animation
+
+        // Bật "vùng nguy hiểm" của vũ khí lên
         if (weapon != null) weapon.EnableDamage();
 
-        yield return new WaitForSeconds(1f);
+        // Đợi thêm một chút cho "vùng nguy hiểm" tồn tại
+        yield return new WaitForSeconds(0.2f); // Đây là "damage window"
 
-        // Tắt collider
+        // Tắt "vùng nguy hiểm" đi
         if (weapon != null) weapon.DisableDamage();
 
+        // Đợi phần còn lại của animation (nếu có)
+        // Tổng thời gian chờ nên khớp với độ dài animation tấn công
+        yield return new WaitForSeconds(0.5f);
         anim.SetBool("IsAttacking", false);
         isAttacking = false;
         nextAttackTime = Time.time + attackCooldown;
