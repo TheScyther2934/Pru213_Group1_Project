@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     Vector2 movement;
     Vector2 lastMoveDirection;
     bool isAttacking = false;
+    private bool isKnockback = false;
+    private float knockbackEndTime = 0f;
 
     PlayerStats stats;
 
@@ -31,23 +33,44 @@ public class PlayerController : MonoBehaviour
         // --- MOVEMENT INPUT ---
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
-        if (movement.x != 0) movement.y = 0;
+        movement.Normalize();
 
-        if (movement != Vector2.zero) lastMoveDirection = movement.normalized;
+        if (movement != Vector2.zero)
+        {
+            lastMoveDirection = movement;
+        }
 
         // --- ANIMATOR PARAMETERS ---
         animator.SetFloat("LastMoveX", lastMoveDirection.x);
         animator.SetFloat("LastMoveY", lastMoveDirection.y);
         animator.SetFloat("MoveX", movement.x);
         animator.SetFloat("MoveY", movement.y);
-        animator.SetBool("IsMoving", movement != Vector2.zero);
-        
+        animator.SetBool("IsMoving", movement.sqrMagnitude > 0.01f);
+
+
 
         if (Input.GetKeyDown(KeyCode.Space)) Attack();
     }
 
     void FixedUpdate()
     {
+        if (isKnockback)
+        {
+            // check end time
+            if (Time.time >= knockbackEndTime)
+            {
+                isKnockback = false;
+                rb.velocity = Vector2.zero; // stop residual velocity
+                // optional: restore something
+                Debug.Log("Knockback ended");
+            }
+            else
+            {
+                // still knockbacking -> do nothing else
+                return;
+            }
+        }
+
         if (!isAttacking)
         {
             float moveSpeed = stats != null ? stats.Get(StatType.MoveSpeed) : 5f;
@@ -122,8 +145,6 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log($"Player dính bẫy, -{amount} HP");
     }
-<<<<<<< Updated upstream
-=======
 
     public void ApplyKnockback(Vector2 direction, float force, float duration = 0.25f)
     {
@@ -141,9 +162,9 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"ApplyKnockback dir={dir} force={force} duration={duration}");
     }
 
+
     public bool IsKnockbackActive
     {
         get { return isKnockback; }
     }
->>>>>>> Stashed changes
 }

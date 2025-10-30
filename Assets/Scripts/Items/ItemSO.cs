@@ -13,5 +13,5 @@ public abstract class ItemSO : ScriptableObject
     public bool stackable = true;
 
     [Header("Shop")]
-    public int price = 10;   // 👈 GIÁ BÁN
+    public int price = 10;
 }

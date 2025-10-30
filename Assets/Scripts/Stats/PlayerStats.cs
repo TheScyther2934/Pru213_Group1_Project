@@ -120,7 +120,6 @@ public class PlayerStats : MonoBehaviour
     {
         yield return new WaitForSeconds(1.96f); // length of Death anim
         animator.enabled = false;            // freeze at last frame
-        gameOverUI?.SetActive(true);
     }
 
 

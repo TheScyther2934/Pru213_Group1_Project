@@ -49,24 +49,20 @@ public class EnemyController : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
 
-<<<<<<< Updated upstream
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player")?.transform;
-=======
-        // Tự động tìm Player
-        FindPlayer();
->>>>>>> Stashed changes
+        //if (player == null)
+        //    player = GameObject.FindGameObjectWithTag("Player")?.transform;
     }
 
     private void Start()
     {
-<<<<<<< Updated upstream
         if (player == null || isAttacking) return;
 
         float distance = Vector2.Distance(transform.position, player.position);
 
         if (distance <= chaseRange && distance > attackRange)
-=======
+
         currentState = State.Roaming;
         nextAttackTime = Time.time;
     }
@@ -82,7 +78,7 @@ public class EnemyController : MonoBehaviour
 
         // Nếu quái chết, bị văng, hoặc đang tấn công, nó không thể tự đưa ra quyết định mới
         if (health.IsDead || knockback.gettingKnockedBack || isAttacking)
->>>>>>> Stashed changes
+
         {
             pathfinding.Stop(); // Đảm bảo dừng di chuyển
             return;
@@ -233,9 +229,8 @@ public class EnemyController : MonoBehaviour
             sr.flipX = (player.position.x < transform.position.x);
         }
     }
-<<<<<<< Updated upstream
 
 }
-=======
+
 }
->>>>>>> Stashed changes
+

@@ -198,7 +198,7 @@ Transform:
   m_GameObject: {fileID: 7409901056952641888}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.0424, y: 1.0424, z: 1.0424}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7409901058858182929}
@@ -273,8 +273,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iconRenderer: {fileID: 5430267976303788920}
   priceText: {fileID: 7409901058339201872}
-  soldCross: {fileID: 0}
+  infoPanel: {fileID: 1167309201612833687, guid: f221f119540b972498428f2b4e139923,
+    type: 3}
+  nameText: {fileID: 0}
+  descText: {fileID: 0}
+  infoPriceText: {fileID: 0}
+  buyHintText: {fileID: 0}
   highlight: {fileID: 0}
+  soldCross: {fileID: 0}
 --- !u!61 &-1447373290944236289
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -288,7 +294,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.014454603, y: -0.2703371}
+  m_Offset: {x: 0.0063382387, y: -0.19728887}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -299,7 +305,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 3.9606423, y: 5.628771}
+  m_Size: {x: 3.0678318, y: 5.4826746}
   m_EdgeRadius: 0
 --- !u!114 &8036327705113406097
 MonoBehaviour:
