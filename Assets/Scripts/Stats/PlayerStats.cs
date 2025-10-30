@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,7 +20,7 @@ public class PlayerStats : MonoBehaviour
     Dictionary<StatType, Stat> map;
     public GameObject gameOverUI;
     private PlayerController controller;
-
+    
     void Awake()
     {
         controller = GetComponent<PlayerController>();
@@ -97,7 +98,7 @@ public class PlayerStats : MonoBehaviour
             // Tính toán hướng đẩy lùi
             Vector2 knockbackDir = ((Vector2)transform.position - damageSourcePosition).normalized;
             // Gọi hàm xử lý mới trong controller
-            controller.HandleTakeDamage(knockbackDir, 4f); // 4f là lực knockback, bạn có thể tùy chỉnh
+            controller.HandleTakeDamage(knockbackDir, 4f); // 4f là lực knockback, bạn có thể tùy chỉnh        
         }
         if (currentHealth <= 0f)
         {
