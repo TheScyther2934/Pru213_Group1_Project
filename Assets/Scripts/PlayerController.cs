@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     PlayerStats stats;
     private bool isInvulnerable = false;
     private Coroutine takeDamageCoroutine;
+    [SerializeField]private AudioClip hurtSoundClip;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -73,6 +74,8 @@ public class PlayerController : MonoBehaviour
         if (isAttacking) return;
         isAttacking = true;
         animator.SetTrigger("Attack");
+        AudioManager.Instance.PlaySoundFXClip(hurtSoundClip, transform, 1f);
+        Debug.Log($"Sound trigger");
         movement = Vector2.zero;
         animator.SetBool("IsMoving", false);
         animator.SetFloat("LastMoveX", lastMoveDirection.x);
@@ -123,7 +126,7 @@ public class PlayerController : MonoBehaviour
     public void HandleTakeDamage(Vector2 knockbackDirection, float knockbackForce)
     {
         if (isInvulnerable) return;
-
+        
         // Dừng coroutine cũ nếu có để reset lại trạng thái choáng
         if (takeDamageCoroutine != null)
         {

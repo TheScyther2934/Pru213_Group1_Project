@@ -229,6 +229,7 @@ MonoBehaviour:
   enemyLayers:
     serializedVersion: 2
     m_Bits: 64
+  hurtSoundClip: {fileID: 8300000, guid: 2654c7bbfdfba814fac59e4c315156de, type: 3}
 --- !u!95 &602280142453750988
 Animator:
   serializedVersion: 5
