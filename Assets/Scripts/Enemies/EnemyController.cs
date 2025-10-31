@@ -20,6 +20,7 @@ public class EnemyController : MonoBehaviour
     private bool isAttacking;
     private float nextAttackTime;
     public EnemyWeapon weapon;
+    private ContactPoint2D[] contacts = new ContactPoint2D[4];
 
     void Start()
     {
@@ -89,7 +90,38 @@ public class EnemyController : MonoBehaviour
     {
         if (isMoving && !isAttacking)
         {
-            rb.MovePosition(rb.position + moveDir * moveSpeed * Time.fixedDeltaTime);
+            Vector2 finalMoveDir = moveDir; // Hướng di chuyển mặc định
+
+            // Lấy tất cả các điểm va chạm hiện tại của Rigidbody
+            int contactCount = rb.GetContacts(contacts);
+
+            // Duyệt qua các điểm va chạm (nếu có)
+            for (int i = 0; i < contactCount; i++)
+            {
+                // Chỉ quan tâm đến va chạm với tường
+                if (contacts[i].collider.CompareTag("Wall"))
+                {
+                    // Lấy vector pháp tuyến (chỉa thẳng ra từ bề mặt tường)
+                    Vector2 wallNormal = contacts[i].normal;
+
+                    // Dùng Tích vô hướng (Dot product) để kiểm tra xem chúng ta đang đi VÀO hay ĐI RA khỏi tường
+                    // Nếu kết quả < 0, tức là góc giữa hướng đi và pháp tuyến > 90 độ -> Đang đi vào tường
+                    if (Vector2.Dot(moveDir, wallNormal) < 0)
+                    {
+                        // Áp dụng logic trượt tường
+                        finalMoveDir = moveDir - Vector2.Dot(moveDir, wallNormal) * wallNormal;
+                        finalMoveDir.Normalize();
+                        break; // Thoát khỏi vòng lặp khi đã tìm thấy va chạm với tường
+                    }
+                }
+            }
+
+            // Gán vận tốc theo hướng đi cuối cùng (hoặc là hướng trượt, hoặc là hướng gốc)
+            rb.velocity = finalMoveDir * moveSpeed;
+        }
+        else
+        {
+            rb.velocity = Vector2.zero;
         }
     }
 
