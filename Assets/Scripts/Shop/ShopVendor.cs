@@ -9,6 +9,10 @@ public class ShopSlot
     [HideInInspector] public bool sold;
 }
 
+/// <summary>
+/// Quản lý shop: random item, hiển thị Display, mua bằng phím B,
+/// và hiển thị tooltip mô tả cho slot đang đứng.
+/// </summary>
 public class ShopVendor : MonoBehaviour
 {
     [Header("Catalog")]
@@ -17,20 +21,16 @@ public class ShopVendor : MonoBehaviour
     [Header("Displays (kéo 3 ShopItemDisplay của Slot0/1/2)")]
     public ShopItemDisplay[] displays = new ShopItemDisplay[3];
 
-    [Header("Popup UI (kéo từ Canvas)")]
-    public GameObject infoPanel;   // popup giữa màn hình (dùng chung)
-    public GameObject dimmer;      // tấm đen full-screen (dùng chung, mặc định tắt)
+    [Header("Tooltip UI")]
+    public ShopTooltipUI tooltip; // kéo Tooltip (có ShopTooltipUI) vào đây
 
     [Header("Input")]
-    public KeyCode infoKey  = KeyCode.Return; // Enter: mở/đóng popup cho slot đang chọn
-    public KeyCode closeKey = KeyCode.Escape; // Esc: đóng popup
-    public KeyCode buyKey   = KeyCode.B;      // B: mua
+    public KeyCode buyKey = KeyCode.B;
 
     [Header("State")]
     public ShopSlot[] slots = new ShopSlot[3] { new(), new(), new() };
     int selected = 0;
     bool isOpen = true;
-    bool isInfoOpen = false; // trạng thái popup
 
     CurrencyWallet wallet;
     PlayerStats pstats;
@@ -40,88 +40,65 @@ public class ShopVendor : MonoBehaviour
         if (catalog == null || catalog.Count == 0)
             Debug.LogWarning("ShopVendor: catalog rỗng!");
 
-        // Ẩn popup + dimmer khi vào game
-        SetPopup(false);
-
         RandomizeOffers();
         RefreshDisplays();
+
+        if (tooltip) tooltip.Hide(true);
     }
 
     void Update()
     {
         if (!isOpen) return;
 
-        if (Input.GetKeyDown(infoKey))
-            ToggleInfoForSelected();
-
-        if (Input.GetKeyDown(closeKey))
-            CloseInfo();
-
+        // Mua
         if (Input.GetKeyDown(buyKey))
         {
             if (TryBuy(selected))
-                CloseInfo(); // mua xong ẩn info
-        }
-    }
-
-    // ================= POPUP =================
-    void ToggleInfoForSelected()
-    {
-        if (selected < 0 || selected >= displays.Length) return;
-
-        // Không cho mở info nếu slot rỗng hoặc đã bán
-        if (slots[selected].item == null || slots[selected].sold)
-        {
-            CloseInfo();
-            return;
-        }
-
-        // Tắt info của các slot khác
-        for (int i = 0; i < displays.Length; i++)
-            if (i != selected) displays[i]?.ShowInfo(false);
-
-        // Toggle slot đang chọn
-        var d = displays[selected];
-        d?.ToggleInfo();
-
-        // Đồng bộ trạng thái popup/dimmer theo UI thực tế (không dựa vào flag lật tay)
-        isInfoOpen = d != null && d.infoPanel != null && d.infoPanel.activeSelf;
-        SetPopup(isInfoOpen);
-    }
-
-    void CloseInfo()
-    {
-        for (int i = 0; i < displays.Length; i++)
-            displays[i]?.ShowInfo(false);
-
-        isInfoOpen = false;
-        SetPopup(false);
-    }
-
-    void SetPopup(bool show)
-    {
-        if (dimmer)    dimmer.SetActive(show);
-        if (infoPanel) infoPanel.SetActive(show);
-
-        if (show && infoPanel)
-        {
-            // đảm bảo InfoPanel ở giữa & trên cùng
-            var rt = infoPanel.GetComponent<RectTransform>();
-            if (rt)
             {
-                rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
-                rt.anchoredPosition = Vector2.zero;
+                // Mua xong thì ẩn tooltip (nếu item đã bán)
+                if (tooltip) tooltip.Hide();
             }
-            if (dimmer) dimmer.transform.SetAsLastSibling();
-            infoPanel.transform.SetAsLastSibling();
         }
     }
 
-    // ================ LOGIC GỐC ================
+    // ====== Tooltip / Trigger API (được gọi từ ShopSlotTrigger) ======
+
+    /// <summary>Gọi khi Player bước vào vùng slot.</summary>
+    public void OnEnterSlot(int index, Transform worldAnchor, PlayerStats ps, CurrencyWallet w)
+    {
+        pstats = ps;
+        wallet = w;
+
+        SetSelectedSlot(index);
+
+        var s = slots[selected];
+        if (s.item != null && !s.sold && tooltip)
+        {
+            tooltip.ShowAt(worldAnchor != null ? worldAnchor : displays[selected].transform,
+                           s.item.description);
+        }
+    }
+
+    /// <summary>Gọi liên tục khi đứng trong vùng slot (giữ highlight đúng).</summary>
+    public void OnStaySlot(int index)
+    {
+        SetSelectedSlot(index);
+    }
+
+    /// <summary>Gọi khi Player rời slot.</summary>
+    public void OnExitSlot(int index)
+    {
+        if (index == selected && tooltip) tooltip.Hide();
+        // Không tắt highlight ở đây nếu bạn còn đứng ở slot khác;
+        // highlight sẽ được set ở SetSelectedSlot khi OnEnter slot khác.
+    }
+
+    // ====== Core shop logic ======
+
     void RandomizeOffers()
     {
         var pool = new List<ItemSO>(catalog.Where(x => x != null));
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < slots.Length; i++)
         {
             slots[i].sold = false;
             if (pool.Count > 0)
@@ -130,7 +107,10 @@ public class ShopVendor : MonoBehaviour
                 slots[i].item = pool[idx];
                 pool.RemoveAt(idx);
             }
-            else slots[i].item = null;
+            else
+            {
+                slots[i].item = null;
+            }
         }
         selected = 0;
     }
@@ -141,9 +121,9 @@ public class ShopVendor : MonoBehaviour
         {
             var d = displays[i];
             if (!d) continue;
+
             d.Show(slots[i].item);
             d.SetSold(slots[i].sold);
-            d.ShowInfo(false); // ẩn info mặc định
             d.SetHighlight(i == selected);
         }
     }
@@ -151,6 +131,7 @@ public class ShopVendor : MonoBehaviour
     public bool TryBuy(int index)
     {
         if (index < 0 || index >= slots.Length) return false;
+
         var s = slots[index];
         var item = s.item;
         if (item == null) return false;
@@ -158,33 +139,25 @@ public class ShopVendor : MonoBehaviour
         if (wallet == null || pstats == null) { Debug.Log("Chưa có player trong vùng shop."); return false; }
         if (!wallet.SpendGold(item.price)) { Debug.Log("Không đủ vàng!"); return false; }
 
+        // Áp dụng item
         if (item is PermanentStatSO perm)      perm.ApplyTo(pstats);
         else if (item is Consumable con)       con.UseOn(pstats);
 
         s.sold = true;
         slots[index] = s;
-        displays[index]?.SetSold(true);
-        return true;
-    }
 
-    // ——— được ShopSlotTrigger gọi ———
-    public void SetPlayer(PlayerStats ps, CurrencyWallet w)
-    {
-        pstats = ps;
-        wallet = w;
-        isOpen = true;
+        // Cập nhật Display
+        if (index >= 0 && index < displays.Length)
+            displays[index]?.SetSold(true);
+
+        return true;
     }
 
     public void SetSelectedSlot(int index)
     {
         selected = Mathf.Clamp(index, 0, displays.Length - 1);
+
         for (int i = 0; i < displays.Length; i++)
             displays[i]?.SetHighlight(i == selected);
-    }
-
-    public void OnLeaveSlot(int idx, PlayerStats ps)
-    {
-        if (idx == selected) displays[idx]?.SetHighlight(false);
-        // có thể CloseInfo(); nếu muốn rời slot là đóng popup
     }
 }

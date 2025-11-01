@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class ShopSlotTrigger : MonoBehaviour
 {
-    public int index;           // 0,1,2
-    public ShopVendor vendor;   // kéo ShopVendor vào Inspector
+    public int index;                // 0,1,2
+    public ShopVendor vendor;        // kéo ShopVendor vào
+    public Transform anchor;         // điểm neo tooltip (kéo transform trên bệ)
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -11,19 +12,12 @@ public class ShopSlotTrigger : MonoBehaviour
 
         var ps = other.GetComponent<PlayerStats>();
         var w  = other.GetComponent<CurrencyWallet>();
-
-        vendor.SetPlayer(ps, w);          // 👈 set player cho vendor
-        vendor.SetSelectedSlot(index);    // 👈 chọn đúng slot
-    }
-
-    void OnTriggerStay2D(Collider2D other)
-    {
-        if (other.CompareTag("Player")) vendor.SetSelectedSlot(index);
+        vendor.OnEnterSlot(index, anchor ? anchor : transform, ps, w);
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
-        vendor.OnLeaveSlot(index, other.GetComponent<PlayerStats>());
+        vendor.OnExitSlot(index);
     }
 }
